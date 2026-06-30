@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.log
+*.txt
+!requirements.txt
+.venv/
+venv/
+.idea/
+.vscode/
+*.pcap
