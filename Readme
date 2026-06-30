@@ -1,0 +1,113 @@
+# Network Packet Sniffer
+
+A simple Python tool for capturing and analyzing live network traffic. Built as a learning project to understand how data flows through a network, how protocols are structured, and how packets can be inspected at a low level.
+
+## Features
+
+- Captures live network packets using [`scapy`](https://scapy.net/)
+- Displays source/destination IP addresses for each packet
+- Identifies protocol type: TCP, UDP, or ICMP
+- Shows source/destination ports for TCP and UDP traffic
+- Displays TCP flags and ICMP type codes
+- Extracts and displays packet payload (as text when possible, otherwise hex)
+- Optional BPF filtering (e.g. capture only HTTP traffic, or only ICMP)
+- Optional packet count limit
+- Optional logging of output to a file
+
+## Demo
+
+```
+============================================================
+Time           : 14:32:10
+Source IP      : 192.168.1.12
+Destination IP : 142.250.190.14
+Protocol       : TCP
+Source Port    : 52344
+Dest Port      : 443
+Flags          : S
+============================================================
+```
+
+## Requirements
+
+- Python 3.8+
+- [Npcap](https://npcap.com/) (Windows only) or libpcap (pre-installed on most Linux/macOS systems)
+- Administrator/root privileges (raw packet capture requires elevated permissions)
+
+## Installation
+
+```bash
+git clone https://github.com/<your-username>/network-packet-sniffer.git
+cd network-packet-sniffer
+pip install -r requirements.txt
+```
+
+## Usage
+
+Run with elevated privileges since raw packet capture requires it.
+
+**Basic capture (all traffic, until Ctrl+C):**
+```bash
+sudo python3 sniffer.py
+```
+
+**Capture on a specific interface:**
+```bash
+sudo python3 sniffer.py -i eth0
+```
+
+**Apply a BPF filter** (e.g. only TCP traffic on port 80):
+```bash
+sudo python3 sniffer.py -f "tcp port 80"
+```
+
+**Limit the number of packets captured:**
+```bash
+sudo python3 sniffer.py -c 50
+```
+
+**Save output to a log file:**
+```bash
+sudo python3 sniffer.py -o capture_log.txt
+```
+
+**Combine options:**
+```bash
+sudo python3 sniffer.py -i eth0 -f "icmp" -c 20 -o ping_log.txt
+```
+
+On Windows, run your terminal/PowerShell as Administrator instead of using `sudo`.
+
+## How It Works
+
+1. **Capture** — `scapy.sniff()` listens on a network interface and grabs each packet as it passes through.
+2. **Parse** — Each packet is inspected layer by layer (Ethernet → IP → TCP/UDP/ICMP) to extract addressing and protocol information.
+3. **Display** — Extracted details are formatted and printed to the console (and optionally written to a log file).
+
+This mirrors what tools like Wireshark or tcpdump do under the hood, just in a minimal, readable form aimed at learning rather than production use.
+
+## Project Structure
+
+```
+network-packet-sniffer/
+├── sniffer.py          # Main script
+├── requirements.txt    # Python dependencies
+├── README.md
+├── LICENSE
+└── .gitignore
+```
+
+## Disclaimer
+
+This tool is intended for educational purposes and for use on networks you own or have explicit permission to monitor. Capturing network traffic without authorization may be illegal in your jurisdiction.
+
+## Possible Future Improvements
+
+- Live protocol statistics / top talkers summary
+- Export captures to `.pcap` format for use in Wireshark
+- GUI built with Tkinter or a web dashboard
+- Alerting on suspicious traffic patterns
+
+## License
+
+This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
